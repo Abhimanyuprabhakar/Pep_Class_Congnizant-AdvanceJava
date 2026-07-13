@@ -1,5 +1,6 @@
 package comAbhimanyu.demo;
 
+import comAbhimanyu.demo.DependencyInjection.OrderService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -9,17 +10,14 @@ public class DemoApplication {
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(DemoApplication.class, args);
+		// Start Spring Boot and create the IoC Container
 		ApplicationContext context =
 				SpringApplication.run(DemoApplication.class, args);
 
-		Student student = context.getBean(Student.class);
+		// Get OrderService bean from the IoC Container
+		OrderService orderService = context.getBean(OrderService.class);
 
-		student.setName("Abhi");
-		student.setAge(21);
-
-		System.out.println(student.getName());
-		System.out.println(student.getAge());
-
+		// Call the method
+		orderService.placeOrder();
 	}
 }
