@@ -1,4 +1,4 @@
-package comAbhimanyu.demo;
+package comAbhimanyu.demo.Java;
 
 class P {
 
