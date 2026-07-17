@@ -58,4 +58,16 @@ public class StudentService {
 
         return studentRepository.save(existingStudent);
     }
+    public boolean deleteStudent(Integer id) {
+
+        Student student = studentRepository.findById(id).orElse(null);
+
+        if (student == null) {
+            return false;
+        }
+
+        studentRepository.delete(student);
+
+        return true;
+    }
 }
