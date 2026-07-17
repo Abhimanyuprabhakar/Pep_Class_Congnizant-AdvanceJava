@@ -32,4 +32,16 @@ public class StudentController {
         Student student = studentService.getStudentByID(id);
         return ResponseEntity.status(200).body(student);
     }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable Integer id,
+                                                 @RequestBody Student student) {
+
+        Student updatedStudent = studentService.updateStudent(id, student);
+
+        if (updatedStudent == null) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        return ResponseEntity.status(200).body(updatedStudent);
+    }
 }

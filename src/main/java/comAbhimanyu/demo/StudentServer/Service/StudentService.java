@@ -44,4 +44,18 @@ public class StudentService {
 
         return null;
     }
+    public Student updateStudent(Integer id, Student student) {
+
+        Student existingStudent = studentRepository.findById(id).orElse(null);
+
+        if (existingStudent == null) {
+            return null;
+        }
+
+        existingStudent.setName(student.getName());
+        existingStudent.setAge(student.getAge());
+        existingStudent.setDepartment(student.getDepartment());
+
+        return studentRepository.save(existingStudent);
+    }
 }
