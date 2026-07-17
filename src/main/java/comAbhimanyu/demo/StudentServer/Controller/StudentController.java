@@ -4,9 +4,7 @@ import comAbhimanyu.demo.StudentServer.Entity.Student;
 import comAbhimanyu.demo.StudentServer.Service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class StudentController {
@@ -27,5 +25,11 @@ public class StudentController {
            return ResponseEntity.status(400).body(result);
         }
         return  ResponseEntity.status(201).body(result);
+
+    }
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Student> getStudent(@PathVariable Integer id) {
+        Student student = studentService.getStudentByID(id);
+        return ResponseEntity.status(200).body(student);
     }
 }
