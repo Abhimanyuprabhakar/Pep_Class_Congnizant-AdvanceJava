@@ -1,5 +1,7 @@
-package comAbhimanyu.demo.StudentServer;
+package comAbhimanyu.demo.StudentServer.Service;
 
+import comAbhimanyu.demo.StudentServer.Entity.Student;
+import comAbhimanyu.demo.StudentServer.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

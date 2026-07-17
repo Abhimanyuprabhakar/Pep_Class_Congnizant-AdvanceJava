@@ -1,6 +1,6 @@
-package comAbhimanyu.demo.StudentServer;
+package comAbhimanyu.demo.StudentServer.Repository;
 
-import org.springframework.stereotype.Repository;
+import comAbhimanyu.demo.StudentServer.Entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 //@Repository
