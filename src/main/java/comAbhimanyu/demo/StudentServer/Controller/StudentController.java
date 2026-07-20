@@ -1,5 +1,7 @@
 package comAbhimanyu.demo.StudentServer.Controller;
 
+import comAbhimanyu.demo.StudentServer.DTO.CreateStudentRequestDTO;
+import comAbhimanyu.demo.StudentServer.DTO.CreateStudentResponseDTO;
 import comAbhimanyu.demo.StudentServer.Entity.Student;
 import comAbhimanyu.demo.StudentServer.Service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,8 @@ public class StudentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> storeStudent(@RequestBody Student student) {
-        Student result = studentService.studentValidate(student);
+    public ResponseEntity<?> storeStudent(@RequestBody CreateStudentRequestDTO createStudentRequestDTO) {
+        CreateStudentResponseDTO result = studentService.studentValidate(createStudentRequestDTO);
 
         if(result == null)
         {
