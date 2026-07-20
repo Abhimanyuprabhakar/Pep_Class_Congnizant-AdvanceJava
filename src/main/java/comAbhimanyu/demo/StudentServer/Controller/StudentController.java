@@ -17,43 +17,53 @@ public class StudentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Student> storeStudent(@RequestBody Student student) {
+    public ResponseEntity<?> storeStudent(@RequestBody Student student) {
         Student result = studentService.studentValidate(student);
 
         if(result == null)
         {
-           return ResponseEntity.status(400).body(result);
+           return ResponseEntity.status(400).body("Invalid input");
         }
         return  ResponseEntity.status(201).body(result);
-
     }
-    @GetMapping("/get/{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable Integer id) {
-        Student student = studentService.getStudentByID(id);
-        return ResponseEntity.status(200).body(student);
-    }
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Integer id,
-                                                 @RequestBody Student student) {
 
-        Student updatedStudent = studentService.updateStudent(id, student);
+    @GetMapping("/getStudent/{id}")
+    public ResponseEntity<?> getStudentById(@PathVariable int id){
 
-        if (updatedStudent == null) {
-            return ResponseEntity.status(404).body(null);
+        Student student = studentService.getStudentById(id);
+
+        if(student == null){
+            return ResponseEntity.status(404).body("Student not found");
         }
 
-        return ResponseEntity.status(200).body(updatedStudent);
+        return ResponseEntity.ok(student);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Integer id) {
-
-        boolean deleted = studentService.deleteStudent(id);
-
-        if (deleted) {
-            return ResponseEntity.status(200).body("Student Deleted Successfully");
+    @PutMapping("/updateStudent/{id}")
+    public ResponseEntity<?> updateStudent(@PathVariable int id, @RequestBody Student student){
+        Student result = studentService.studentUpdate(id, student);
+        if(result == null)
+        {
+            return ResponseEntity.status(400).body("Invalid input");
         }
+        return ResponseEntity.status(200).body(result);
+    }
 
-        return ResponseEntity.status(404).body("Student Not Found");
+    @DeleteMapping("/deleteStudent/{id}")
+    public ResponseEntity<?> deleteStudent(@PathVariable int id){
+        Student student = studentService.deleteStudent(id);
+        if(student == null) {
+            return ResponseEntity.status(400).body("Invalid input");
+        }
+        return ResponseEntity.status(200).body("Student deleted");
     }
 }
+
+
+
+
+
+
+
+
+

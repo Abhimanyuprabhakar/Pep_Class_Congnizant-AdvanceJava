@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registry — Catalog Desk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --paper: #efe6d3;
+            --paper-dark: #e4d7bc;
+            --ink: #1b2a41;
+            --ink-soft: #4a4335;
+            --rule: #8b7355;
+            --stamp-red: #a13d2e;
+            --stamp-green: #2f5233;
+            --card-shadow: rgba(27, 42, 65, 0.18);
+            --focus: #2f6f8f;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                    repeating-linear-gradient(0deg, rgba(139,115,85,0.05) 0px, rgba(139,115,85,0.05) 1px, transparent 1px, transparent 28px),
+                    var(--paper);
+            color: var(--ink);
+            font-family: 'Source Serif 4', serif;
+            padding: 48px 20px 80px;
+        }
+
+        .drawer-label {
+            text-align: center;
+            font-family: 'Special Elite', monospace;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            font-size: 13px;
+            color: var(--ink-soft);
+            margin-bottom: 6px;
+        }
+
+        h1 {
+            font-family: 'Special Elite', monospace;
+            text-align: center;
+            font-weight: 400;
+            font-size: clamp(28px, 4vw, 42px);
+            letter-spacing: 0.02em;
+            margin: 0 0 6px;
+            color: var(--ink);
+        }
+
+        .subhead {
+            text-align: center;
+            color: var(--ink-soft);
+            font-size: 15px;
+            margin: 0 0 36px;
+            font-style: italic;
+        }
+
+        .config {
+            max-width: 620px;
+            margin: 0 auto 32px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--ink-soft);
+            background: var(--paper-dark);
+            border: 1px solid var(--rule);
+            border-radius: 4px;
+            padding: 10px 14px;
+        }
+        .config label { white-space: nowrap; }
+        .config input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--ink);
+            outline: none;
+            border-bottom: 1px dashed var(--rule);
+            padding: 2px 4px;
+        }
+
+        .tabs {
+            max-width: 620px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tab {
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: var(--paper-dark);
+            border: 1px solid var(--rule);
+            border-bottom: none;
+            color: var(--ink-soft);
+            padding: 10px 18px;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            margin: 0 -1px 0 0;
+            position: relative;
+            top: 1px;
+        }
+        .tab:hover { color: var(--ink); }
+        .tab.active {
+            background: #fffdf6;
+            color: var(--ink);
+            font-weight: 600;
+            z-index: 2;
+        }
+        .tab:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+        .card-wrap { max-width: 620px; margin: 0 auto; }
+
+        .card {
+            background: #fffdf6;
+            border: 1px solid var(--rule);
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 0 10px 24px var(--card-shadow);
+            padding: 30px 32px 26px;
+            position: relative;
+            display: none;
+        }
+        .card.active { display: block; }
+
+        .punch {
+            position: absolute;
+            top: -14px;
+            left: 28px;
+            width: 22px;
+            height: 22px;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-radius: 50%;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-family: 'Special Elite', monospace;
+            font-size: 16px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--ink);
+            margin: 4px 0 4px;
+        }
+        .card-desc {
+            font-size: 14px;
+            color: var(--ink-soft);
+            margin: 0 0 22px;
+            border-bottom: 1px dashed var(--rule);
+            padding-bottom: 18px;
+        }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: 5px;
+        }
+        .field input, .field textarea {
+            width: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--ink);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--rule);
+            padding: 6px 2px;
+            outline: none;
+        }
+        .field input:focus, .field textarea:focus {
+            border-bottom: 2px solid var(--focus);
+        }
+        .field textarea { resize: vertical; min-height: 50px; }
+
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        button.stamp {
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 10px 22px;
+            border-radius: 3px;
+            border: 2px solid currentColor;
+            background: transparent;
+            cursor: pointer;
+            transform: rotate(-1deg);
+            transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+        }
+        button.stamp:hover { transform: rotate(0deg) scale(1.02); }
+        button.stamp:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+        .stamp.create { color: var(--stamp-green); }
+        .stamp.create:hover { background: var(--stamp-green); color: #fffdf6; }
+
+        .stamp.lookup { color: var(--focus); }
+        .stamp.lookup:hover { background: var(--focus); color: #fffdf6; }
+
+        .stamp.update { color: var(--ink); }
+        .stamp.update:hover { background: var(--ink); color: #fffdf6; }
+
+        .stamp.remove { color: var(--stamp-red); }
+        .stamp.remove:hover { background: var(--stamp-red); color: #fffdf6; }
+
+        .result {
+            margin-top: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border-left: 3px solid var(--rule);
+            padding: 10px 14px;
+            background: var(--paper);
+            border-radius: 0 4px 4px 0;
+            display: none;
+        }
+        .result.show { display: block; }
+        .result.ok { border-color: var(--stamp-green); }
+        .result.err { border-color: var(--stamp-red); color: var(--stamp-red); }
+
+        .status-tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            background: var(--rule);
+            color: #fffdf6;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 36px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--ink-soft);
+        }
+
+        @media (max-width: 480px) {
+            .row-2 { grid-template-columns: 1fr; }
+            .card { padding: 24px 18px 20px; }
+            .tab { padding: 9px 12px; font-size: 11px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+            button.stamp { transform: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="drawer-label">Registrar's Office — Records Drawer 4</div>
+<h1>Student Catalog</h1>
+<p class="subhead">One card per student. File, find, amend, or withdraw a record.</p>
+
+<div class="config">
+    <label for="baseUrl">API base:</label>
+    <input id="baseUrl" type="text" value="http://localhost:8080" spellcheck="false">
+</div>
+
+<div class="tabs" role="tablist" aria-label="Record actions">
+    <button class="tab active" data-tab="create" role="tab" aria-selected="true">Create</button>
+    <button class="tab" data-tab="lookup" role="tab" aria-selected="false">Lookup</button>
+    <button class="tab" data-tab="update" role="tab" aria-selected="false">Update</button>
+    <button class="tab" data-tab="remove" role="tab" aria-selected="false">Remove</button>
+</div>
+
+<div class="card-wrap">
+
+    <!-- CREATE -->
+    <section class="card active" id="card-create">
+        <div class="punch"></div>
+        <div class="status-tag">POST /create</div>
+        <div class="card-title">New Student Card</div>
+        <p class="card-desc">File a new record into the drawer.</p>
+
+        <div class="row-2">
+            <div class="field">
+                <label for="c-name">Full name</label>
+                <input id="c-name" type="text" placeholder="e.g. Your Name">
+            </div>
+            <div class="field">
+                <label for="c-id">Student ID</label>
+                <input id="c-id" type="text" placeholder="e.g. XXXXXXXX">
+            </div>
+        </div>
+        <div class="row-2">
+            <div class="field">
+                <label for="c-age">Age</label>
+                <input id="c-age" type="number" min="0" placeholder="e.g. 18">
+            </div>
+            <div class="field">
+                <label for="c-dep">Department</label>
+                <input id="c-dep" type="text" placeholder="e.g. Computer Science">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="stamp create" onclick="createStudent()">File Record</button>
+        </div>
+        <div class="result" id="result-create"></div>
+    </section>
+
+    <!-- LOOKUP -->
+    <section class="card" id="card-lookup">
+        <div class="punch"></div>
+        <div class="status-tag">GET /getStudent/:id</div>
+        <div class="card-title">Find a Card</div>
+        <p class="card-desc">Pull a record by student ID.</p>
+
+        <div class="field">
+            <label for="l-id">Student ID</label>
+            <input id="l-id" type="text" placeholder="e.g. 123">
+        </div>
+
+        <div class="actions">
+            <button class="stamp lookup" onclick="getStudent()">Pull Card</button>
+        </div>
+        <div class="result" id="result-lookup"></div>
+    </section>
+
+    <!-- UPDATE -->
+    <section class="card" id="card-update">
+        <div class="punch"></div>
+        <div class="status-tag">PUT /updateStudent/:id</div>
+        <div class="card-title">Amend a Card</div>
+        <p class="card-desc">Revise the details already on file. All fields are saved as entered — fill in every one, including values that stay the same.</p>
+
+        <div class="field">
+            <label for="u-id">Student ID</label>
+            <input id="u-id" type="text" placeholder="e.g. 12318753">
+        </div>
+        <div class="row-2">
+            <div class="field">
+                <label for="u-name">Full name</label>
+                <input id="u-name" type="text" placeholder="Name">
+            </div>
+            <div class="field">
+                <label for="u-age">Age</label>
+                <input id="u-age" type="number" min="0" placeholder="Age">
+            </div>
+        </div>
+        <div class="field">
+            <label for="u-dep">Department</label>
+            <input id="u-dep" type="text" placeholder="Department">
+        </div>
+
+        <div class="actions">
+            <button class="stamp update" onclick="updateStudent()">Amend Record</button>
+        </div>
+        <div class="result" id="result-update"></div>
+    </section>
+
+    <!-- REMOVE -->
+    <section class="card" id="card-remove">
+        <div class="punch"></div>
+        <div class="status-tag">DELETE /deleteStudent/:id</div>
+        <div class="card-title">Withdraw a Card</div>
+        <p class="card-desc">Pull a record from the drawer for good. This cannot be undone.</p>
+
+        <div class="field">
+            <label for="d-id">Student ID</label>
+            <input id="d-id" type="text" placeholder="e.g. 1">
+        </div>
+
+        <div class="actions">
+            <button class="stamp remove" onclick="deleteStudent()">Withdraw Record</button>
+        </div>
+        <div class="result" id="result-remove"></div>
+    </section>
+
+</div>
+
+<footer>Talks to your API over fetch — nothing is stored in the browser.</footer>
+
+<script>
+    // ---- Tab switching ----
+    const tabs = document.querySelectorAll('.tab');
+    const cards = document.querySelectorAll('.card');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+            cards.forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+            document.getElementById('card-' + tab.dataset.tab).classList.add('active');
+        });
+    });
+
+    function base() {
+        return document.getElementById('baseUrl').value.replace(/\/$/, '');
+    }
+
+    function showResult(id, ok, data) {
+        const el = document.getElementById(id);
+        el.classList.remove('ok', 'err');
+        el.classList.add('show', ok ? 'ok' : 'err');
+        el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    }
+
+    async function callApi(url, options, resultId) {
+        try {
+            const res = await fetch(url, options);
+            let body;
+            const text = await res.text();
+            try { body = JSON.parse(text); } catch { body = text; }
+            showResult(resultId, res.ok, body || (res.ok ? 'Done — no content returned.' : `Request failed (${res.status})`));
+            return body;
+        } catch (err) {
+            showResult(resultId, false, 'Could not reach the server: ' + err.message);
+        }
+    }
+
+    // ---- CREATE ----
+    function createStudent() {
+        const payload = {
+            id: document.getElementById('c-id').value.trim(),
+            name: document.getElementById('c-name').value.trim(),
+            age: document.getElementById('c-age').value.trim(),
+            dep: document.getElementById('c-dep').value.trim(),
+        };
+        callApi(`${base()}/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        }, 'result-create');
+    }
+
+    // ---- LOOKUP ----
+    function getStudent() {
+        const id = document.getElementById('l-id').value.trim();
+        if (!id) return showResult('result-lookup', false, 'Enter a student ID first.');
+        callApi(`${base()}/getStudent/${encodeURIComponent(id)}`, { method: 'GET' }, 'result-lookup');
+    }
+
+    // ---- UPDATE ----
+    function updateStudent() {
+        const id = document.getElementById('u-id').value.trim();
+        const name = document.getElementById('u-name').value.trim();
+        const age = document.getElementById('u-age').value.trim();
+        const dep = document.getElementById('u-dep').value.trim();
+
+        if (!id) return showResult('result-update', false, 'Enter a student ID first.');
+        if (!name || !age || !dep) {
+            return showResult('result-update', false, 'This endpoint overwrites the whole record — fill in name, age, and department.');
+        }
+
+        callApi(`${base()}/updateStudent/${encodeURIComponent(id)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, age, dep }),
+        }, 'result-update');
+    }
+
+    // ---- DELETE ----
+    function deleteStudent() {
+        const id = document.getElementById('d-id').value.trim();
+        if (!id) return showResult('result-remove', false, 'Enter a student ID first.');
+        callApi(`${base()}/deleteStudent/${encodeURIComponent(id)}`, { method: 'DELETE' }, 'result-remove');
+    }
+</script>
+
+</body>
+</html>

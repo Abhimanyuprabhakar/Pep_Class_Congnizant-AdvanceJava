@@ -5,19 +5,17 @@ import comAbhimanyu.demo.StudentServer.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class StudentService {
-
-    private StudentRepository studentRepository;
+    StudentRepository studentRepository;
 
     @Autowired
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    // Create Student
     public Student studentValidate(Student student) {
 
         int id = student.getId();
@@ -25,49 +23,43 @@ public class StudentService {
         int age = student.getAge();
         String department = student.getDepartment();
 
-        if (id < 0 || name == null || name.isBlank()
-                || age < 0 || department == null || department.isBlank()) {
-            return null;
-        }
+//        if (id <= 0 || name == null || name.isBlank()
+//                || age <= 0 || department == null || department.isBlank()) {
+//            return null;
+//        }
+
+        student.setCreatedAt(LocalDateTime.now());
+        student.setUpdatedAt(LocalDateTime.now());
 
         return studentRepository.save(student);
     }
 
-    // Get Student by ID
-    public Student getStudentByID(Integer id) {
-
-        Optional<Student> student = studentRepository.findById(id);
-
-        if (student.isPresent()) {
-            return student.get();
-        }
-
-        return null;
+    public Student getStudentById(int id) {
+        return studentRepository.findById(id).orElse(null);
     }
-    public Student updateStudent(Integer id, Student student) {
 
-        Student existingStudent = studentRepository.findById(id).orElse(null);
+    public Student studentUpdate(int id, Student student) {
 
-        if (existingStudent == null) {
+        Student result = studentRepository.findById(id).orElse(null);
+
+        if (result == null) {
             return null;
         }
 
-        existingStudent.setName(student.getName());
-        existingStudent.setAge(student.getAge());
-        existingStudent.setDepartment(student.getDepartment());
+        result.setName(student.getName());
+        result.setAge(student.getAge());
+        result.setDepartment(student.getDepartment());
+        result.setUpdatedAt(LocalDateTime.now());
 
-        return studentRepository.save(existingStudent);
+        return studentRepository.save(result);
     }
-    public boolean deleteStudent(Integer id) {
 
-        Student student = studentRepository.findById(id).orElse(null);
-
-        if (student == null) {
-            return false;
+    public Student deleteStudent(int id) {
+        Student result = studentRepository.findById(id).orElse(null);
+        if(result == null) {
+            return null;
         }
-
-        studentRepository.delete(student);
-
-        return true;
+        studentRepository.delete(result);
+        return result;
     }
 }
