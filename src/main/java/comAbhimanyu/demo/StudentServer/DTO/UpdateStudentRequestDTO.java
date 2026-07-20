@@ -1,13 +1,10 @@
-package comAbhimanyu.demo.StudentServer.DTO;
+package comAbhimanyu.demo.StudentServer.Dto;
 
-public class CreateStudentResponseDTO {
-    private int id;
+public class UpdateStudentRequestDTO {
     private String name;
     private int age;
     private String department;
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public int getAge() { return age; }

@@ -1,78 +1,120 @@
 package comAbhimanyu.demo.StudentServer.Service;
 
-import comAbhimanyu.demo.StudentServer.DTO.CreateStudentRequestDTO;
-import comAbhimanyu.demo.StudentServer.DTO.CreateStudentResponseDTO;
-import comAbhimanyu.demo.StudentServer.Entity.Student;
-import comAbhimanyu.demo.StudentServer.Repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import comAbhimanyu.demo.StudentServer.Dto.CreateStudentRequestDTO;
+import comAbhimanyu.demo.StudentServer.Dto.StudentResponseDTO;
+import comAbhimanyu.demo.StudentServer.Dto.UpdateStudentRequestDTO;
+import comAbhimanyu.demo.StudentServer.Entity.Student;
+import comAbhimanyu.demo.StudentServer.Repository.StudentRepository;
 
 @Service
 public class StudentService {
-    StudentRepository studentRepository;
+    private StudentRepository studentRepository; // Create ref for StudentRepository class to save into DB
 
-    @Autowired
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public CreateStudentResponseDTO studentValidate(CreateStudentRequestDTO createStudentRequestDTO) {
-
-        Student student = mapToStudent(createStudentRequestDTO);
-        return mapToResponseDTO(student);
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
     }
 
-    public Student getStudentById(int id) {
-        return studentRepository.findById(id).orElse(null);
+    // private boolean isStudentValid(Student student){
+    // int id = student.getId();
+    // String name = student.getName();
+    // String department = student.getDepartment();
+    // int age = student.getAge();
+
+    // if(id < 0 || name == null || age <0 || department == null){
+    // return false;
+    // }
+    // return true;
+    // }
+
+    /*
+     * studentSave method.
+     * Student Class conversion to CreateStudentRequestDTO
+     */
+    // public Student studentSave(Student student) {
+    // if(!isStudentValid(student)){
+    // return null;
+    // }
+    // if(studentRepository.existsById(student.getId())){
+    // return null;
+    // }
+    // /*We are using the annotation @CreationTimestamp */
+    // // student.setCreatedAt(LocalDateTime.now());
+    // // student.setUpdatedAt(LocalDateTime.now());
+    // return studentRepository.save(student);
+    // }
+
+    /* CreateStudentRequestDTO code */
+    public StudentResponseDTO studentSave(CreateStudentRequestDTO studentRequestDTO) {
+        Student student = mapToStudent(studentRequestDTO);
+
+        Student savedStudent = studentRepository.save(student);
+        return mapToResponseDTO(savedStudent);
     }
 
-    public Student studentUpdate(int id, Student student) {
-
-        Student result = studentRepository.findById(id).orElse(null);
-
-        if (result == null) {
-            return null;
-        }
-
-        result.setName(student.getName());
-        result.setAge(student.getAge());
-        result.setDepartment(student.getDepartment());
-        result.setUpdatedAt(LocalDateTime.now());
-
-        return studentRepository.save(result);
-    }
-
-    public Student deleteStudent(int id) {
-        Student result = studentRepository.findById(id).orElse(null);
-        if(result == null) {
-            return null;
-        }
-        studentRepository.delete(result);
-        return result;
-    }
-
-    private Student mapToStudent(CreateStudentRequestDTO createStudentRequestDTO) {
+    private Student mapToStudent(CreateStudentRequestDTO studentRequestDTO) {
         Student student = new Student();
-
-        student.setName(createStudentRequestDTO.getName());
-        student.setAge(createStudentRequestDTO.getAge());
-        student.setDepartment(createStudentRequestDTO.getDepartment());
-        student.setCreatedAt(LocalDateTime.now());
-        student.setUpdatedAt(LocalDateTime.now());
-
+        student.setName(studentRequestDTO.getName());
+        student.setAge(studentRequestDTO.getAge());
+        student.setDepartment(studentRequestDTO.getDepartment());
         return student;
     }
 
-    private CreateStudentResponseDTO mapToResponseDTO(Student student) {
-        CreateStudentResponseDTO createStudentResponseDTO = new CreateStudentResponseDTO();
-        createStudentResponseDTO.setId(student.getId());
-        createStudentResponseDTO.setName(student.getName());
-        createStudentResponseDTO.setAge(student.getAge());
-        createStudentResponseDTO.setDepartment(student.getDepartment());
+    private StudentResponseDTO mapToResponseDTO(Student student) {
+        StudentResponseDTO responseDTO = new StudentResponseDTO();
+        responseDTO.setId(student.getId());
+        responseDTO.setName(student.getName());
+        responseDTO.setAge(student.getAge());
+        responseDTO.setDepartment(student.getDepartment());
+        return responseDTO;
+    }
 
-        return createStudentResponseDTO;
+    /* Conversion from normal to DTO response for getStudentById */
+    public Student getStudentById(int id) {
+    return studentRepository.findById(id).orElse(null);
+    }
 
+    public StudentResponseDTO getStudentDTOById(int id) {
+
+        Student student = studentRepository.findById(id).orElse(null);
+
+        if (student == null) {
+            return null;
+        }
+
+        return mapToResponseDTO(student);
+    }
+
+    /* Updatesave conversion below using DTO */
+    // public Student studentUpdateSave(Student student){
+    // // if(!isStudentValid(student)){
+    // // return null;
+    // // }
+    // /*We are using the annotation @UpdateTimestamp */
+    // // student.setUpdatedAt(LocalDateTime.now());
+    // return studentRepository.save(student);
+    // }
+
+    public StudentResponseDTO updateStudent(int id, UpdateStudentRequestDTO updateStudentRequestDTO) {
+        Student student = studentRepository.findById(id).orElse(null);
+        if (student == null) {
+            return null;
+        }
+        student.setName(updateStudentRequestDTO.getName());
+        student.setAge(updateStudentRequestDTO.getAge());
+
+        Student updatedStudent = studentRepository.save(student);
+        return mapToResponseDTO(updatedStudent);
+    }
+
+    public void deleteStudentById(int id) {
+        studentRepository.deleteById(id);
     }
 }
